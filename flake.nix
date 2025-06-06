@@ -20,6 +20,7 @@
         packages = [
           pkgs.nixd
           pkgs.alejandra
+          pkgs.pre-commit
         ];
       };
     });
