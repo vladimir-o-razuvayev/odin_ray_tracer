@@ -6,3 +6,4 @@
 `nix flake show`
 `nix-tree $(nix build .#devShells.aarch64-darwin.default --no-link --print-out-paths)` to see all packages and dependencies for the shell
 `nix-tree $(nix build .#packages.aarch64-darwin.default --no-link --print-out-paths)` to see all packages and dependencies for the shell
+`nix build` - build Odin project

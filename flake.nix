@@ -15,6 +15,8 @@
       pkgs = import nixpkgs {
         inherit system;
       };
+      clang = pkgs.llvmPackages_16.clang-unwrapped;
+      llvm = pkgs.llvmPackages_16.llvm;
       odinEnvPackages = [
         pkgs.nixd
         pkgs.alejandra
@@ -22,10 +24,22 @@
         pkgs.odin
         pkgs.ols
         pkgs.nix-tree
+        clang
+        llvm
       ];
     in {
       devShells.default = pkgs.mkShell {
         packages = odinEnvPackages;
+        src = ./.;
+        nativeBuildInputs = [pkgs.odin clang llvm];
+        buildPhase = ''
+          mkdir -p bin
+          odin build src -out:bin/hello -llvm-config ${llvm}/bin/llvm-config
+        '';
+        installPhase = ''
+          mkdir -p $out/bin
+          cp bin/hello $out/bin/
+        '';
       };
 
       packages.default = pkgs.buildEnv {
