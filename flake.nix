@@ -11,19 +11,26 @@
     nixpkgs,
     flake-utils,
   }:
-    flake-utils.lib.eachDefaultSystem (system: let
+    flake-utils.lib.eachSystem ["aarch64-darwin"] (system: let
       pkgs = import nixpkgs {
         inherit system;
       };
+      odinEnvPackages = [
+        pkgs.nixd
+        pkgs.alejandra
+        pkgs.pre-commit
+        pkgs.odin
+        pkgs.ols
+        pkgs.nix-tree
+      ];
     in {
       devShells.default = pkgs.mkShell {
-        packages = [
-          pkgs.nixd
-          pkgs.alejandra
-          pkgs.pre-commit
-          pkgs.odin
-          pkgs.ols
-        ];
+        packages = odinEnvPackages;
+      };
+
+      packages.default = pkgs.buildEnv {
+        name = "odin-env";
+        paths = odinEnvPackages;
       };
     });
 }
