@@ -21,6 +21,8 @@
           pkgs.nixd
           pkgs.alejandra
           pkgs.pre-commit
+          pkgs.odin
+          pkgs.ols
         ];
       };
     });
