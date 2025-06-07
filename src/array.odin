@@ -7,6 +7,10 @@ concat_arrays :: proc(a, b: [3]int) -> [6]int {
 	return [6]int{a[0], a[1], a[2], b[0], b[1], b[2]}
 }
 
+//****************************************/
+// Tests
+//****************************************/
+
 @(test)
 concat_arrays_test :: proc(t: ^testing.T) {
 	a := [3]int{1, 2, 3}

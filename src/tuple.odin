@@ -16,8 +16,8 @@ point :: proc(x, y, z: f64) -> Point {return Point{x, y, z, 1}}
 vector :: proc(x, y, z: f64) -> Vector {return Vector{x, y, z, 0}}
 zero_vector :: proc() -> Vector {return Vector{0, 0, 0, 0}}
 // We don't need to call `is_point` or `is_vector` on typed `Point` and `Vector`
-is_point :: proc(t: Tuple) -> bool {return equal(t.w, 1.0)}
-is_vector :: proc(t: Tuple) -> bool {return equal(t.w, 0.0)}
+is_point :: proc(t: Tuple) -> bool {return equal(t.w, 1)}
+is_vector :: proc(t: Tuple) -> bool {return equal(t.w, 0)}
 
 // add
 // We want to enforce not adding a point to a point at compile time (w != 2)
@@ -89,28 +89,36 @@ normalize :: proc(v: Vector) -> Vector {
 
 sqrt :: proc(a: f64) -> f64 {return math.sqrt(a)}
 
+dot :: proc(a, b: Vector) -> f64 {
+	return a.x * b.x + a.y * b.y + a.z * b.z
+}
+
+cross :: proc(a, b: Vector) -> Vector {
+	return Vector{a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x, 0}
+}
+
 //****************************************/
 // Tests
 //****************************************/
 
 @(test)
 tuple_is_point_test :: proc(t: ^testing.T) {
-	a := Tuple{4.3, -4.2, 3.1, 1.0}
+	a := Tuple{4.3, -4.2, 3.1, 1}
 	testing.expect_value(t, a.x, 4.3)
 	testing.expect_value(t, a.y, -4.2)
 	testing.expect_value(t, a.z, 3.1)
-	testing.expect_value(t, a.w, 1.0)
+	testing.expect_value(t, a.w, 1)
 	testing.expect(t, is_point(a))
 	testing.expect(t, !is_vector(a))
 }
 
 @(test)
 tuple_is_vector_test :: proc(t: ^testing.T) {
-	a := Tuple{4.3, -4.2, 3.1, 0.0}
+	a := Tuple{4.3, -4.2, 3.1, 0}
 	testing.expect_value(t, a.x, 4.3)
 	testing.expect_value(t, a.y, -4.2)
 	testing.expect_value(t, a.z, 3.1)
-	testing.expect_value(t, a.w, 0.0)
+	testing.expect_value(t, a.w, 0)
 	testing.expect(t, !is_point(a))
 	testing.expect(t, is_vector(a))
 }
@@ -205,38 +213,38 @@ tuple_fraction_multiply_test :: proc(t: ^testing.T) {
 tuple_scalar_divide_test :: proc(t: ^testing.T) {
 	a := Tuple{1, -2, 3, -4}
 	expected := Tuple{0.5, -1, 1.5, -2}
-	testing.expect(t, _equal(divide(a, 2.0), expected))
+	testing.expect(t, _equal(divide(a, 2), expected))
 }
 
 @(test)
 magnitude_x_unit_test :: proc(t: ^testing.T) {
 	v := vector(1, 0, 0)
-	testing.expect(t, equal(magnitude(v), 1.0))
+	testing.expect(t, equal(magnitude(v), 1))
 }
 
 @(test)
 magnitude_y_unit_test :: proc(t: ^testing.T) {
 	v := vector(0, 1, 0)
-	testing.expect(t, equal(magnitude(v), 1.0))
+	testing.expect(t, equal(magnitude(v), 1))
 }
 
 @(test)
 magnitude_z_unit_test :: proc(t: ^testing.T) {
 	v := vector(0, 0, 1)
-	testing.expect(t, equal(magnitude(v), 1.0))
+	testing.expect(t, equal(magnitude(v), 1))
 }
 
 @(test)
 magnitude_positive_vector_test :: proc(t: ^testing.T) {
 	v := vector(1, 2, 3)
-	expected := sqrt(14.0)
+	expected := sqrt(14)
 	testing.expect(t, equal(magnitude(v), expected))
 }
 
 @(test)
 magnitude_negative_vector_test :: proc(t: ^testing.T) {
 	v := vector(-1, -2, -3)
-	expected := sqrt(14.0)
+	expected := sqrt(14)
 	testing.expect(t, equal(magnitude(v), expected))
 }
 
@@ -250,7 +258,7 @@ normalize_simple_test :: proc(t: ^testing.T) {
 @(test)
 normalize_nontrivial_test :: proc(t: ^testing.T) {
 	v := vector(1, 2, 3)
-	expected := vector(1 / sqrt(14.0), 2 / sqrt(14.0), 3 / sqrt(14))
+	expected := vector(1 / sqrt(14), 2 / sqrt(14), 3 / sqrt(14))
 	testing.expect(t, equal(normalize(v), expected))
 }
 
@@ -258,5 +266,25 @@ normalize_nontrivial_test :: proc(t: ^testing.T) {
 normalize_magnitude_test :: proc(t: ^testing.T) {
 	v := vector(1, 2, 3)
 	norm := normalize(v)
-	testing.expect(t, equal(magnitude(norm), 1.0))
+	testing.expect(t, equal(magnitude(norm), 1))
+}
+
+@(test)
+dot_product_test :: proc(t: ^testing.T) {
+	a := vector(1, 2, 3)
+	b := vector(2, 3, 4)
+	expected := 20.0
+	testing.expect(t, equal(dot(a, b), expected))
+}
+
+@(test)
+cross_product_test :: proc(t: ^testing.T) {
+	a := vector(1, 2, 3)
+	b := vector(2, 3, 4)
+
+	expected_ab := vector(-1, 2, -1)
+	expected_ba := vector(1, -2, 1)
+
+	testing.expect(t, equal(cross(a, b), expected_ab))
+	testing.expect(t, equal(cross(b, a), expected_ba))
 }
