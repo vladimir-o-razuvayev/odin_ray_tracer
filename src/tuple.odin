@@ -14,7 +14,7 @@ EPSILON: f64 : 2.2204460492503131e-016
 // Initialisers
 point :: proc(x, y, z: f64) -> Point {return Point{x, y, z, 1}}
 vector :: proc(x, y, z: f64) -> Vector {return Vector{x, y, z, 0}}
-zero_vector :: proc() -> Vector {return vector(0, 0, 0)}
+zero_vector :: proc() -> Vector {return Vector{0, 0, 0, 0}}
 // We don't need to call `is_point` or `is_vector` on typed `Point` and `Vector`
 is_point :: proc(t: Tuple) -> bool {return equal(t.w, 1.0)}
 is_vector :: proc(t: Tuple) -> bool {return equal(t.w, 0.0)}
@@ -79,8 +79,15 @@ divide :: proc(a: $T/Tuple, scalar: f64) -> T {
 }
 
 magnitude :: proc(v: $T/Tuple) -> f64 {
-	return abs(math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z))
+	return abs(sqrt(v.x * v.x + v.y * v.y + v.z * v.z))
 }
+
+normalize :: proc(v: Vector) -> Vector {
+	m := magnitude(v)
+	return Vector{v.x / m, v.y / m, v.z / m, 0}
+}
+
+sqrt :: proc(a: f64) -> f64 {return math.sqrt(a)}
 
 //****************************************/
 // Tests
@@ -222,13 +229,34 @@ magnitude_z_unit_test :: proc(t: ^testing.T) {
 @(test)
 magnitude_positive_vector_test :: proc(t: ^testing.T) {
 	v := vector(1, 2, 3)
-	expected := math.sqrt(f64(14.0))
+	expected := sqrt(14.0)
 	testing.expect(t, equal(magnitude(v), expected))
 }
 
 @(test)
 magnitude_negative_vector_test :: proc(t: ^testing.T) {
 	v := vector(-1, -2, -3)
-	expected := math.sqrt(f64(14.0))
+	expected := sqrt(14.0)
 	testing.expect(t, equal(magnitude(v), expected))
+}
+
+@(test)
+normalize_simple_test :: proc(t: ^testing.T) {
+	v := vector(4, 0, 0)
+	expected := vector(1, 0, 0)
+	testing.expect(t, equal(normalize(v), expected))
+}
+
+@(test)
+normalize_nontrivial_test :: proc(t: ^testing.T) {
+	v := vector(1, 2, 3)
+	expected := vector(1 / sqrt(14.0), 2 / sqrt(14.0), 3 / sqrt(14))
+	testing.expect(t, equal(normalize(v), expected))
+}
+
+@(test)
+normalize_magnitude_test :: proc(t: ^testing.T) {
+	v := vector(1, 2, 3)
+	norm := normalize(v)
+	testing.expect(t, equal(magnitude(norm), 1.0))
 }
