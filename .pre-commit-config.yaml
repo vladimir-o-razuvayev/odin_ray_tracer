@@ -3,3 +3,10 @@ repos:
     rev: 4.0.0
     hooks:
       - id: alejandra-nix
+  - repo: local
+    hooks:
+      - id: odin-tests
+        name: Run Odin Tests
+        entry: ./scripts/run-tests.sh
+        language: script
+        pass_filenames: false

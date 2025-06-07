@@ -7,3 +7,4 @@ result-*
 
 # Ignore Odin build directory
 bin
+src.bin
