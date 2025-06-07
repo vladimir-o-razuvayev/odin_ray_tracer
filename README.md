@@ -1,5 +1,11 @@
 # odin_ray_tracer
 
+## Commands
+
+### Local
+`odin test src`
+
+### Nix
 `nix develop` to enter dev shell
 `open -a zed` to launch Zed from dev shell
 `nix eval .#packages.aarch64-darwin.default` to see path to derivation
@@ -7,3 +13,7 @@
 `nix-tree $(nix build .#devShells.aarch64-darwin.default --no-link --print-out-paths)` to see all packages and dependencies for the shell
 `nix-tree $(nix build .#packages.aarch64-darwin.default --no-link --print-out-paths)` to see all packages and dependencies for the shell
 `nix build` - build Odin project
+
+### Pre-Commit
+`pre-commit install`
+`pre-commit autoupdate`
