@@ -8,10 +8,12 @@ Tuple :: distinct [4]f64
 // Vector and Point are the public types
 Vector :: distinct Tuple
 Point :: distinct Tuple
+Color :: distinct Tuple
 
 EPSILON: f64 : 2.2204460492503131e-016
 
 // Initialisers
+color :: proc(r, g, b: f64) -> Color {return Color{r, g, b, 0}}
 point :: proc(x, y, z: f64) -> Point {return Point{x, y, z, 1}}
 vector :: proc(x, y, z: f64) -> Vector {return Vector{x, y, z, 0}}
 zero_vector :: proc() -> Vector {return Vector{0, 0, 0, 0}}
@@ -21,6 +23,7 @@ is_vector :: proc(t: Tuple) -> bool {return equal(t.w, 0)}
 
 // add
 // We want to enforce not adding a point to a point at compile time (w != 2)
+add_cc :: proc(a, b: Color) -> Color {return Color(_add(a, b))}
 add_vv :: proc(a, b: Vector) -> Vector {return Vector(_add(a, b))}
 add_pv :: proc(a: Point, b: Vector) -> Point {return Point(_add(a, b))}
 add_vp :: proc(a: Vector, b: Point) -> Point {return Point(_add(a, b))}
@@ -28,6 +31,7 @@ _add :: proc(a: $T1/Tuple, b: $T2/Tuple) -> Tuple {
 	return Tuple{a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w}
 }
 add :: proc {
+	add_cc,
 	add_vv,
 	add_pv,
 	add_vp,
@@ -35,6 +39,7 @@ add :: proc {
 
 // sub
 // We want to enforce not subtracting a point from a vector (w != -1)
+sub_cc :: proc(a, b: Color) -> Color {return Color(_sub(a, b))}
 sub_pp :: proc(a, b: Point) -> Vector {return Vector(_sub(a, b))}
 sub_pv :: proc(a: Point, b: Vector) -> Point {return Point(_sub(a, b))}
 sub_vv :: proc(a, b: Vector) -> Vector {return Vector(_sub(a, b))}
@@ -42,6 +47,7 @@ _sub :: proc(a: $T1/Tuple, b: $T2/Tuple) -> Tuple {
 	return Tuple{a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w}
 }
 sub :: proc {
+	sub_cc,
 	sub_pp,
 	sub_pv,
 	sub_vv,
@@ -49,6 +55,7 @@ sub :: proc {
 
 // equal
 // A Vector should not be compared for equality with a Point (w == 0 or w == 1)
+equal_cc :: proc(a, b: Color) -> bool {return _equal(a, b)}
 equal_pp :: proc(a, b: Point) -> bool {return _equal(a, b)}
 equal_vv :: proc(a, b: Vector) -> bool {return _equal(a, b)}
 equal_ff :: proc(a, b: f64) -> bool {return abs(a - b) < EPSILON}
@@ -61,6 +68,7 @@ _equal :: proc(a: $T1/Tuple, b: $T2/Tuple) -> bool {
 	return true
 }
 equal :: proc {
+	equal_cc,
 	equal_pp,
 	equal_vv,
 	equal_ff,
@@ -80,6 +88,10 @@ divide :: proc(a: $T/Tuple, scalar: f64) -> T {
 
 magnitude :: proc(v: $T/Tuple) -> f64 {
 	return abs(sqrt(v.x * v.x + v.y * v.y + v.z * v.z))
+}
+
+hadamard_product :: proc(a, b: Color) -> Color {
+	return Color{a.r * b.r, a.g * b.g, a.b * b.b, 0}
 }
 
 normalize :: proc(v: Vector) -> Vector {
@@ -287,4 +299,43 @@ cross_product_test :: proc(t: ^testing.T) {
 
 	testing.expect(t, equal(cross(a, b), expected_ab))
 	testing.expect(t, equal(cross(b, a), expected_ba))
+}
+
+@(test)
+color_components_test :: proc(t: ^testing.T) {
+	c := color(-0.5, 0.4, 1.7)
+	testing.expect(t, equal(c.r, -0.5))
+	testing.expect(t, equal(c.g, 0.4))
+	testing.expect(t, equal(c.b, 1.7))
+}
+
+@(test)
+color_addition_test :: proc(t: ^testing.T) {
+	c1 := color(0.9, 0.6, 0.75)
+	c2 := color(0.7, 0.1, 0.25)
+	expected := color(1.6, 0.7, 1.0)
+	testing.expect(t, equal(add(c1, c2), expected))
+}
+
+@(test)
+color_subtraction_test :: proc(t: ^testing.T) {
+	c1 := color(0.9, 0.6, 0.75)
+	c2 := color(0.7, 0.1, 0.25)
+	expected := color(0.2, 0.5, 0.5)
+	testing.expect(t, equal(sub(c1, c2), expected))
+}
+
+@(test)
+color_scalar_multiply_test :: proc(t: ^testing.T) {
+	c := color(0.2, 0.3, 0.4)
+	expected := color(0.4, 0.6, 0.8)
+	testing.expect(t, equal(scale(c, 2.0), expected))
+}
+
+@(test)
+hadamard_product_test :: proc(t: ^testing.T) {
+	c1 := color(1, 0.2, 0.4)
+	c2 := color(0.9, 1, 0.1)
+	expected := color(0.9, 0.2, 0.04)
+	testing.expect(t, equal(hadamard_product(c1, c2), expected))
 }
