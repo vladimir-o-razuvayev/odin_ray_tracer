@@ -4,11 +4,12 @@ EPSILON: f64 : 2.2204460492503131e-016
 
 // equal
 // A Vector should not be compared for equality with a Point (w == 0 or w == 1)
-equal_cc :: proc(a, b: Color) -> bool {return _equal(a, b)}
-equal_pp :: proc(a, b: Point) -> bool {return _equal(a, b)}
-equal_vv :: proc(a, b: Vector) -> bool {return _equal(a, b)}
-equal_ff :: proc(a, b: f64) -> bool {return abs(a - b) < EPSILON}
-equal_m4 :: proc(a, b: Matrix4) -> bool {
+_equal_tt :: proc(a, b: Tuple) -> bool {return _equal(a, b)}
+_equal_cc :: proc(a, b: Color) -> bool {return _equal(a, b)}
+_equal_pp :: proc(a, b: Point) -> bool {return _equal(a, b)}
+_equal_vv :: proc(a, b: Vector) -> bool {return _equal(a, b)}
+_equal_ff :: proc(a, b: f64) -> bool {return abs(a - b) < EPSILON}
+_equal_m4 :: proc(a, b: Matrix4) -> bool {
 	for row in 0 ..< 4 {
 		for col in 0 ..< 4 {
 			if abs(a[row][col] - b[row][col]) > EPSILON do return false
@@ -25,9 +26,10 @@ _equal :: proc(a: $T1/Tuple, b: $T2/Tuple) -> bool {
 	return true
 }
 equal :: proc {
-	equal_cc,
-	equal_pp,
-	equal_vv,
-	equal_ff,
-	equal_m4,
+	_equal_tt,
+	_equal_cc,
+	_equal_pp,
+	_equal_vv,
+	_equal_ff,
+	_equal_m4,
 }

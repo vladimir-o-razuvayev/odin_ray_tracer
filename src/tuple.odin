@@ -176,33 +176,32 @@ zero_minus_vector_test :: proc(t: ^testing.T) {
 	testing.expect(t, equal(sub(zero, v), expected))
 }
 
-// When comparing `Tuple` we use the internal `_equal`
 @(test)
 tuple_negation_test :: proc(t: ^testing.T) {
 	a := Tuple{1, -2, 3, -4}
 	expected := Tuple{-1, 2, -3, 4}
-	testing.expect(t, _equal(neg(a), expected))
+	testing.expect(t, equal(neg(a), expected))
 }
 
 @(test)
 tuple_scalar_multiply_test :: proc(t: ^testing.T) {
 	a := Tuple{1, -2, 3, -4}
 	expected := Tuple{3.5, -7, 10.5, -14}
-	testing.expect(t, _equal(scale(a, 3.5), expected))
+	testing.expect(t, equal(scale(a, 3.5), expected))
 }
 
 @(test)
 tuple_fraction_multiply_test :: proc(t: ^testing.T) {
 	a := Tuple{1, -2, 3, -4}
 	expected := Tuple{0.5, -1, 1.5, -2}
-	testing.expect(t, _equal(scale(a, 0.5), expected))
+	testing.expect(t, equal(scale(a, 0.5), expected))
 }
 
 @(test)
 tuple_scalar_divide_test :: proc(t: ^testing.T) {
 	a := Tuple{1, -2, 3, -4}
 	expected := Tuple{0.5, -1, 1.5, -2}
-	testing.expect(t, _equal(divide(a, 2), expected))
+	testing.expect(t, equal(divide(a, 2), expected))
 }
 
 @(test)
