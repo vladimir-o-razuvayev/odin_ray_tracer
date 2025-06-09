@@ -1,7 +1,6 @@
 package main
 
 import "core:fmt"
-import "core:os"
 import "core:strconv"
 import "core:strings"
 import "core:testing"
@@ -93,9 +92,9 @@ clamp_color :: proc(val: f64) -> int {
 	return scaled
 }
 
-save_ppm :: proc(ppm: string, filename: string) -> bool {
-	return os.write_entire_file(filename, transmute([]byte)ppm)
-}
+//****************************************/
+// Tests
+//****************************************/
 
 @(test)
 canvas_creation_test :: proc(t: ^testing.T) {

@@ -8,3 +8,6 @@ result-*
 # Ignore Odin build directory
 bin
 src.bin
+
+# Ignore generated output files
+projectile.ppm
