@@ -10,8 +10,6 @@ Vector :: distinct Tuple
 Point :: distinct Tuple
 Color :: distinct Tuple
 
-EPSILON: f64 : 2.2204460492503131e-016
-
 // Initialisers
 color :: proc(r, g, b: f64) -> Color {return Color{r, g, b, 0}}
 point :: proc(x, y, z: f64) -> Point {return Point{x, y, z, 1}}
@@ -51,27 +49,6 @@ sub :: proc {
 	sub_pp,
 	sub_pv,
 	sub_vv,
-}
-
-// equal
-// A Vector should not be compared for equality with a Point (w == 0 or w == 1)
-equal_cc :: proc(a, b: Color) -> bool {return _equal(a, b)}
-equal_pp :: proc(a, b: Point) -> bool {return _equal(a, b)}
-equal_vv :: proc(a, b: Vector) -> bool {return _equal(a, b)}
-equal_ff :: proc(a, b: f64) -> bool {return abs(a - b) < EPSILON}
-_equal :: proc(a: $T1/Tuple, b: $T2/Tuple) -> bool {
-	for i in 0 ..< 4 {
-		if abs(a[i] - b[i]) > EPSILON {
-			return false
-		}
-	}
-	return true
-}
-equal :: proc {
-	equal_cc,
-	equal_pp,
-	equal_vv,
-	equal_ff,
 }
 
 neg :: proc(a: $T/Tuple) -> T {
