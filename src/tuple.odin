@@ -205,21 +205,13 @@ tuple_scalar_divide_test :: proc(t: ^testing.T) {
 }
 
 @(test)
-magnitude_x_unit_test :: proc(t: ^testing.T) {
-	v := vector(1, 0, 0)
-	testing.expect(t, equal(magnitude(v), 1))
-}
-
-@(test)
-magnitude_y_unit_test :: proc(t: ^testing.T) {
-	v := vector(0, 1, 0)
-	testing.expect(t, equal(magnitude(v), 1))
-}
-
-@(test)
-magnitude_z_unit_test :: proc(t: ^testing.T) {
-	v := vector(0, 0, 1)
-	testing.expect(t, equal(magnitude(v), 1))
+magnitude_unit_test :: proc(t: ^testing.T) {
+	x := vector(1, 0, 0)
+	y := vector(0, 1, 0)
+	z := vector(0, 0, 1)
+	testing.expect(t, equal(magnitude(x), 1))
+	testing.expect(t, equal(magnitude(y), 1))
+	testing.expect(t, equal(magnitude(z), 1))
 }
 
 @(test)
@@ -269,10 +261,8 @@ dot_product_test :: proc(t: ^testing.T) {
 cross_product_test :: proc(t: ^testing.T) {
 	a := vector(1, 2, 3)
 	b := vector(2, 3, 4)
-
 	expected_ab := vector(-1, 2, -1)
 	expected_ba := vector(1, -2, 1)
-
 	testing.expect(t, equal(cross(a, b), expected_ab))
 	testing.expect(t, equal(cross(b, a), expected_ba))
 }
