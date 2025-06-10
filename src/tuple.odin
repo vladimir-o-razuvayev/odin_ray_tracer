@@ -4,16 +4,16 @@ import "core:math"
 import "core:testing"
 
 // Tuple will be our internal type for maths
-Tuple :: distinct [4]f64
+Tuple :: distinct [4]f32
 // Vector and Point are the public types
 Vector :: distinct Tuple
 Point :: distinct Tuple
 Color :: distinct Tuple
 
 // Initialisers
-color :: proc(r, g, b: f64) -> Color {return Color{r, g, b, 0}}
-point :: proc(x, y, z: f64) -> Point {return Point{x, y, z, 1}}
-vector :: proc(x, y, z: f64) -> Vector {return Vector{x, y, z, 0}}
+color :: proc(r, g, b: f32) -> Color {return Color{r, g, b, 0}}
+point :: proc(x, y, z: f32) -> Point {return Point{x, y, z, 1}}
+vector :: proc(x, y, z: f32) -> Vector {return Vector{x, y, z, 0}}
 zero_vector :: proc() -> Vector {return Vector{0, 0, 0, 0}}
 // We don't need to call `is_point` or `is_vector` on typed `Point` and `Vector`
 is_point :: proc(t: Tuple) -> bool {return equal(t.w, 1)}
@@ -55,15 +55,15 @@ neg :: proc(a: $T/Tuple) -> T {
 	return T{-a.x, -a.y, -a.z, -a.w}
 }
 
-scale :: proc(a: $T/Tuple, scalar: f64) -> T {
+scale :: proc(a: $T/Tuple, scalar: f32) -> T {
 	return T{a.x * scalar, a.y * scalar, a.z * scalar, a.w * scalar}
 }
 
-divide :: proc(a: $T/Tuple, scalar: f64) -> T {
+divide :: proc(a: $T/Tuple, scalar: f32) -> T {
 	return T{a.x / scalar, a.y / scalar, a.z / scalar, a.w / scalar}
 }
 
-magnitude :: proc(v: $T/Tuple) -> f64 {
+magnitude :: proc(v: $T/Tuple) -> f32 {
 	return abs(sqrt(v.x * v.x + v.y * v.y + v.z * v.z))
 }
 
@@ -76,9 +76,9 @@ normalize :: proc(v: Vector) -> Vector {
 	return Vector{v.x / m, v.y / m, v.z / m, 0}
 }
 
-sqrt :: proc(a: f64) -> f64 {return math.sqrt(a)}
+sqrt :: proc(a: f32) -> f32 {return math.sqrt(a)}
 
-dot :: proc(a, b: Vector) -> f64 {
+dot :: proc(a, b: Vector) -> f32 {
 	return a.x * b.x + a.y * b.y + a.z * b.z
 }
 
@@ -253,8 +253,7 @@ normalize_magnitude_test :: proc(t: ^testing.T) {
 dot_product_test :: proc(t: ^testing.T) {
 	a := vector(1, 2, 3)
 	b := vector(2, 3, 4)
-	expected := 20.0
-	testing.expect(t, equal(dot(a, b), expected))
+	testing.expect(t, equal(dot(a, b), 20.0))
 }
 
 @(test)

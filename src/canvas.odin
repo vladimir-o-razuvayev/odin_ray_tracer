@@ -85,7 +85,7 @@ canvas_to_ppm :: proc(c: Canvas) -> (res: string) {
 	return strings.to_string(builder)
 }
 
-clamp_color :: proc(val: f64) -> int {
+clamp_color :: proc(val: f32) -> int {
 	scaled := int(val * 255.0 + 0.5)
 	if scaled < 0 do return 0
 	if scaled > 255 do return 255
