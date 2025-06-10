@@ -11,3 +11,6 @@ src.bin
 
 # Ignore generated output files
 projectile.ppm
+
+# Ignore OS cruft
+.DS_Store

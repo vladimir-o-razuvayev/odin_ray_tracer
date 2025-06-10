@@ -3,6 +3,17 @@
 // For a full list of overridable settings, and general information on folder-specific settings,
 // see the documentation: https://zed.dev/docs/configuring-zed#settings-files
 {
+  "edit_predictions": {
+    "mode": "subtle",
+    "copilot": {
+      "proxy": null,
+      "proxy_no_verify": null
+    },
+    "enabled_in_text_threads": false
+  },
+  "features": {
+    "copilot": false
+  },
   "languages": {
     "Nix": {
       "formatter": {
@@ -17,5 +28,16 @@
       "language_servers": ["ols", "..."]
     }
   },
-  "show_edit_predictions": false
+  "show_edit_predictions": false,
+  "file_scan_exclusions": [
+    //"**/.git",
+    "**/.svn",
+    "**/.hg",
+    "**/.jj",
+    "**/CVS",
+    "**/.DS_Store",
+    "**/Thumbs.db",
+    "**/.classpath",
+    "**/.settings"
+  ]
 }

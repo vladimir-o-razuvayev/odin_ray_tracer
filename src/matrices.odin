@@ -36,8 +36,84 @@ transpose :: proc(m: Matrix4) -> Matrix4 {
 	return result
 }
 
-determinant :: proc(m: Matrix2) -> f64 {
+_determinant_2x2 :: proc(m: Matrix2) -> f64 {
 	return m[0][0] * m[1][1] - m[0][1] * m[1][0]
+}
+_determinant_3x3 :: proc(m: Matrix3) -> f64 {
+	return m[0][0] * cofactor(m, 0, 0) + m[0][1] * cofactor(m, 0, 1) + m[0][2] * cofactor(m, 0, 2)
+}
+_determinant_4x4 :: proc(m: Matrix4) -> f64 {
+	sum: f64 = 0
+	for col in 0 ..< 4 {
+		sum += m[0][col] * cofactor(m, 0, col)
+	}
+	return sum
+}
+determinant :: proc {
+	_determinant_2x2,
+	_determinant_3x3,
+	_determinant_4x4,
+}
+
+_submatrix_3x3 :: proc(m: Matrix3, row, col: int) -> Matrix2 {
+	result: Matrix2
+	r := 0
+	for i in 0 ..< 3 {
+		if i == row do continue
+		c := 0
+		for j in 0 ..< 3 {
+			if j == col do continue
+			result[r][c] = m[i][j]
+			c += 1
+		}
+		r += 1
+	}
+	return result
+}
+_submatrix_4x4 :: proc(m: Matrix4, row, col: int) -> Matrix3 {
+	result: Matrix3
+	r := 0
+	for i in 0 ..< 4 {
+		if i == row do continue
+		c := 0
+		for j in 0 ..< 4 {
+			if j == col do continue
+			result[r][c] = m[i][j]
+			c += 1
+		}
+		r += 1
+	}
+	return result
+}
+submatrix :: proc {
+	_submatrix_3x3,
+	_submatrix_4x4,
+}
+
+_minor_3x3 :: proc(m: Matrix3, row, col: int) -> f64 {
+	return determinant(submatrix(m, row, col))
+}
+_minor_4x4 :: proc(m: Matrix4, row, col: int) -> f64 {
+	return determinant(submatrix(m, row, col))
+}
+minor :: proc {
+	_minor_3x3,
+	_minor_4x4,
+}
+
+_cofactor_3x3 :: proc(m: Matrix3, row, col: int) -> f64 {
+	min := minor(m, row, col)
+	if (row + col) % 2 != 0 do return -min
+	else do return min
+}
+_cofactor_4x4 :: proc(m: Matrix4, row, col: int) -> f64 {
+	min := minor(m, row, col)
+	if (row + col) % 2 != 0 do return -min
+	else do return min
+}
+cofactor :: proc {
+	_cofactor_3x3,
+	_cofactor_4x4,
 }
 
 //****************************************/
@@ -129,4 +205,56 @@ determinant_2x2_test :: proc(t: ^testing.T) {
 	m := Matrix2{{1, 5}, {-3, 2}}
 	expected := 17.0
 	testing.expect_value(t, determinant(m), expected)
+}
+
+@(test)
+submatrix_3x3_to_2x2_test :: proc(t: ^testing.T) {
+	m := Matrix3{{1, 5, 0}, {-3, 2, 7}, {0, 6, -3}}
+	expected := Matrix2{{-3, 2}, {0, 6}}
+	result := submatrix(m, 0, 2)
+	testing.expect(t, equal(result, expected))
+}
+
+@(test)
+submatrix_4x4_to_3x3_test :: proc(t: ^testing.T) {
+	m := Matrix4{{-6, 1, 1, 6}, {-8, 5, 8, 6}, {-1, 0, 8, 2}, {-7, 1, -1, 1}}
+	expected := Matrix3{{-6, 1, 6}, {-8, 8, 6}, {-7, -1, 1}}
+	result := submatrix(m, 2, 1)
+	testing.expect(t, equal(result, expected))
+}
+
+@(test)
+minor_3x3_test :: proc(t: ^testing.T) {
+	a := Matrix3{{3, 5, 0}, {2, -1, -7}, {6, -1, 5}}
+	b := submatrix(a, 1, 0)
+	testing.expect_value(t, determinant(b), 25)
+	testing.expect_value(t, minor(a, 1, 0), 25)
+}
+
+@(test)
+cofactor_3x3_test :: proc(t: ^testing.T) {
+	a := Matrix3{{3, 5, 0}, {2, -1, -7}, {6, -1, 5}}
+	testing.expect_value(t, minor(a, 0, 0), -12)
+	testing.expect_value(t, cofactor(a, 0, 0), -12)
+	testing.expect_value(t, minor(a, 1, 0), 25)
+	testing.expect_value(t, cofactor(a, 1, 0), -25)
+}
+
+@(test)
+determinant_3x3_test :: proc(t: ^testing.T) {
+	a := Matrix3{{1, 2, 6}, {-5, 8, -4}, {2, 6, 4}}
+	testing.expect_value(t, cofactor(a, 0, 0), 56)
+	testing.expect_value(t, cofactor(a, 0, 1), 12)
+	testing.expect_value(t, cofactor(a, 0, 2), -46)
+	testing.expect_value(t, determinant(a), -196)
+}
+
+@(test)
+determinant_4x4_test :: proc(t: ^testing.T) {
+	a := Matrix4{{-2, -8, 3, 5}, {-3, 1, 7, 3}, {1, 2, -9, 6}, {-6, 7, 7, -9}}
+	testing.expect_value(t, cofactor(a, 0, 0), 690)
+	testing.expect_value(t, cofactor(a, 0, 1), 447)
+	testing.expect_value(t, cofactor(a, 0, 2), 210)
+	testing.expect_value(t, cofactor(a, 0, 3), 51)
+	testing.expect_value(t, determinant(a), -4071)
 }
