@@ -43,11 +43,12 @@ _determinant_3x3 :: proc(m: Matrix3) -> f64 {
 	return m[0][0] * cofactor(m, 0, 0) + m[0][1] * cofactor(m, 0, 1) + m[0][2] * cofactor(m, 0, 2)
 }
 _determinant_4x4 :: proc(m: Matrix4) -> f64 {
-	sum: f64 = 0
-	for col in 0 ..< 4 {
-		sum += m[0][col] * cofactor(m, 0, col)
-	}
-	return sum
+	return(
+		m[0][0] * cofactor(m, 0, 0) +
+		m[0][1] * cofactor(m, 0, 1) +
+		m[0][2] * cofactor(m, 0, 2) +
+		m[0][3] * cofactor(m, 0, 3) \
+	)
 }
 determinant :: proc {
 	_determinant_2x2,
