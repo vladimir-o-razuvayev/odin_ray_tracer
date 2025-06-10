@@ -22,8 +22,8 @@ matrix_multiply :: proc(a, b: Matrix4) -> Matrix4 {
 	return result
 }
 
-matrix_multiply_tuple :: proc(m: Matrix4, t: $T/Tuple) -> Tuple {
-	return Tuple {
+matrix_multiply_tuple :: proc(m: Matrix4, t: $T/Tuple) -> T {
+	return T {
 		m[0][0] * t.x + m[0][1] * t.y + m[0][2] * t.z + m[0][3] * t.w,
 		m[1][0] * t.x + m[1][1] * t.y + m[1][2] * t.z + m[1][3] * t.w,
 		m[2][0] * t.x + m[2][1] * t.y + m[2][2] * t.z + m[2][3] * t.w,

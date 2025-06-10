@@ -12,6 +12,10 @@ Canvas :: struct {
 	pixels: [][]Color,
 }
 
+in_bounds :: proc(x, y, width, height: int) -> bool {
+	return x >= 0 && x < width && y >= 0 && y < height
+}
+
 canvas :: proc(width, height: int) -> Canvas {
 	pixels := make([][]Color, width)
 	for w in 0 ..< width {
