@@ -15,11 +15,13 @@ position :: proc(r: Ray, t: f32) -> Point {
 	return add(r.origin, scale(r.direction, t))
 }
 
-transform :: proc(r: Ray, m: Matrix4) -> Ray {
-	return Ray {
-		origin = matrix_multiply_tuple(m, r.origin),
-		direction = matrix_multiply_tuple(m, r.direction),
-	}
+_transform_r :: proc(r: Ray, m: Matrix4) -> Ray {
+	return Ray{origin = transform(r.origin, m), direction = transform(r.direction, m)}
+}
+_transform_t :: proc(t: $T/Tuple, m: Matrix4) -> T {return matrix_multiply_tuple(m, t)}
+transform :: proc {
+	_transform_r,
+	_transform_t,
 }
 
 //****************************************/
