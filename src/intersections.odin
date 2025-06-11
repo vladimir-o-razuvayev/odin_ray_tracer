@@ -37,7 +37,7 @@ intersect :: proc(s: ^Sphere, r: Ray) -> (res: [2]Intersection, count: int = 0) 
 
 hit :: proc(xs: []Intersection) -> (lowest: ^Intersection) {
 	for i in 0 ..< len(xs) {
-		if xs[i].t >= 0 {
+		if xs[i].t >= 0 && xs[i].object != nil {
 			if lowest == nil || xs[i].t < lowest.t {
 				lowest = &xs[i]
 			}

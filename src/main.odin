@@ -3,32 +3,35 @@ package main
 import "core:fmt"
 import "core:math"
 import "core:os"
-import "core:strings"
 
 main :: proc() {
-	canvas_size := 600
-	radius := cast(f32)(canvas_size) * 3.0 / 8.0
-	center := cast(f32)(canvas_size) / 2.0
+	canvas_pixels := 100
+	wall_size: f32 = 7.0
+	pixel_size := wall_size / f32(canvas_pixels)
+	half := wall_size / 2.0
 
-	c := canvas(canvas_size, canvas_size)
-	defer canvas_destroy(c)
+	ray_origin := point(0, 0, -5)
+	wall_z: f32 = 10.0
+	red := color(1, 0, 0)
 
-	twelve := point(0, 0, 1)
+	canvas := canvas(canvas_pixels, canvas_pixels)
+	shape := unit_sphere()
 
-	for hour in 0 ..< 12 {
-		angle := cast(f32)(hour) * math.PI / 6.0
-		rotation := rotation_y(angle)
-		position := matrix_multiply_tuple(rotation, twelve)
+	for y in 0 ..< canvas_pixels {
+		world_y := half - pixel_size * f32(y)
+		for x in 0 ..< canvas_pixels {
+			world_x := -half + pixel_size * f32(x)
 
-		x := cast(int)(center + position.x * radius)
-		y := cast(int)(center - position.z * radius) // z becomes canvas y; flip for top-down
+			position := point(world_x, world_y, wall_z)
+			direction := normalize(sub(position, ray_origin))
+			r := ray(ray_origin, direction)
 
-		if in_bounds(x, y, canvas_size, canvas_size) {
-			write_pixel(&c, x, y, color(1, 1, 1))
+			xs, count := intersect(&shape, r)
+			if hit(xs[:]) != nil do write_pixel(&canvas, x, y, red)
 		}
 	}
 
-	ppm := canvas_to_ppm(c)
+	ppm := canvas_to_ppm(canvas)
 	defer delete(ppm)
 	os.write_entire_file("projectile.ppm", transmute([]byte)ppm)
 }
