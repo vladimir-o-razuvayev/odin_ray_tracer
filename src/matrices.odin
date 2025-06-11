@@ -11,15 +11,14 @@ identity_matrix :: proc() -> Matrix4 {
 	return {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}}
 }
 
-matrix_multiply :: proc(a, b: Matrix4) -> Matrix4 {
-	result: Matrix4
+matrix_multiply :: proc(a, b: Matrix4) -> (res: Matrix4) {
 	for x in 0 ..< 4 {
 		for y in 0 ..< 4 {
-			result[x][y] =
+			res[x][y] =
 				a[x][0] * b[0][y] + a[x][1] * b[1][y] + a[x][2] * b[2][y] + a[x][3] * b[3][y]
 		}
 	}
-	return result
+	return res
 }
 
 matrix_multiply_tuple :: proc(m: Matrix4, t: $T/Tuple) -> T {
@@ -31,10 +30,9 @@ matrix_multiply_tuple :: proc(m: Matrix4, t: $T/Tuple) -> T {
 	}
 }
 
-transpose :: proc(m: Matrix4) -> Matrix4 {
-	result: Matrix4
-	for i in 0 ..< 4 {for j in 0 ..< 4 {result[j][i] = m[i][j]}}
-	return result
+transpose :: proc(m: Matrix4) -> (res: Matrix4) {
+	for i in 0 ..< 4 {for j in 0 ..< 4 {res[j][i] = m[i][j]}}
+	return res
 }
 
 _determinant_1x1 :: proc(m: Matrix1) -> f32 {return m[0][0]}
@@ -61,20 +59,17 @@ determinant :: proc {
 
 is_invertible :: proc(m: $M) -> bool {return !equal(determinant(m), 0.0)}
 
-_submatrix_2x2 :: proc(m: Matrix2, row, col: int) -> Matrix1 {
-	ret: Matrix1
-	_submatrix(m, &ret, row, col, 3)
-	return ret[0][0]
+_submatrix_2x2 :: proc(m: Matrix2, row, col: int) -> (res: Matrix1) {
+	_submatrix(m, &res, row, col, 3)
+	return res
 }
-_submatrix_3x3 :: proc(m: Matrix3, row, col: int) -> Matrix2 {
-	ret: Matrix2
-	_submatrix(m, &ret, row, col, 3)
-	return ret
+_submatrix_3x3 :: proc(m: Matrix3, row, col: int) -> (res: Matrix2) {
+	_submatrix(m, &res, row, col, 3)
+	return res
 }
-_submatrix_4x4 :: proc(m: Matrix4, row, col: int) -> Matrix3 {
-	ret: Matrix3
-	_submatrix(m, &ret, row, col, 4)
-	return ret
+_submatrix_4x4 :: proc(m: Matrix4, row, col: int) -> (res: Matrix3) {
+	_submatrix(m, &res, row, col, 4)
+	return res
 }
 _submatrix :: proc(m: $M1, rm: $M2, row, col, size: int) {
 	r := 0
@@ -135,18 +130,17 @@ _inverse_4x4 :: proc(m: Matrix4) -> (res: Matrix4, ok: bool) #optional_ok {
 }
 _inverse :: proc(m: $M, size: int) -> (res: M, ok: bool) #optional_ok {
 	if is_invertible(m) {
-		result: M
 		for i in 0 ..< size {
 			for j in 0 ..< size {
 				c := cofactor(m, i, j)
 				// note that "col, row" here, instead of "row, col",
 				// accomplishes the transpose operation!
-				result[j][i] = c / determinant(m)
+				res[j][i] = c / determinant(m)
 			}
 		}
-		return result, true
+		return res, true
 	} else {
-		return m, false
+		return res, false
 	}
 }
 inverse :: proc {

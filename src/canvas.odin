@@ -42,7 +42,7 @@ write_pixel :: proc(c: ^Canvas, x, y: int, col: Color) {
 	c.pixels[x][y] = col
 }
 
-canvas_to_ppm :: proc(c: Canvas) -> (res: string) {
+canvas_to_ppm :: proc(c: Canvas) -> string {
 	builder := strings.builder_make()
 
 	strings.write_string(&builder, "P3\n")

@@ -51,9 +51,7 @@ sub :: proc {
 	sub_vv,
 }
 
-neg :: proc(a: $T/Tuple) -> T {
-	return T{-a.x, -a.y, -a.z, -a.w}
-}
+neg :: proc(a: $T/Tuple) -> T {return T{-a.x, -a.y, -a.z, -a.w}}
 
 scale :: proc(a: $T/Tuple, scalar: f32) -> T {
 	return T{a.x * scalar, a.y * scalar, a.z * scalar, a.w * scalar}
@@ -63,13 +61,8 @@ divide :: proc(a: $T/Tuple, scalar: f32) -> T {
 	return T{a.x / scalar, a.y / scalar, a.z / scalar, a.w / scalar}
 }
 
-magnitude :: proc(v: $T/Tuple) -> f32 {
-	return abs(sqrt(v.x * v.x + v.y * v.y + v.z * v.z))
-}
-
-hadamard_product :: proc(a, b: Color) -> Color {
-	return Color{a.r * b.r, a.g * b.g, a.b * b.b, 0}
-}
+magnitude :: proc(v: $T/Tuple) -> f32 {return abs(sqrt(v.x * v.x + v.y * v.y + v.z * v.z))}
+hadamard_product :: proc(a, b: Color) -> Color {return Color{a.r * b.r, a.g * b.g, a.b * b.b, 0}}
 
 normalize :: proc(v: Vector) -> Vector {
 	m := magnitude(v)
@@ -77,10 +70,7 @@ normalize :: proc(v: Vector) -> Vector {
 }
 
 sqrt :: proc(a: f32) -> f32 {return math.sqrt(a)}
-
-dot :: proc(a, b: Vector) -> f32 {
-	return a.x * b.x + a.y * b.y + a.z * b.z
-}
+dot :: proc(a, b: Vector) -> f32 {return a.x * b.x + a.y * b.y + a.z * b.z}
 
 cross :: proc(a, b: Vector) -> Vector {
 	return Vector{a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x, 0}
