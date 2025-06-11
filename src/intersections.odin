@@ -1,6 +1,5 @@
 package main
 
-import "core:fmt"
 import "core:testing"
 
 Intersection :: struct {
@@ -31,6 +30,18 @@ intersect :: proc(s: ^Sphere, r: Ray) -> (res: [2]Intersection, count: int = 0) 
 		count = 2
 	}
 	return res, count
+}
+
+hit :: proc(xs: []Intersection) -> ^Intersection {
+	lowest: ^Intersection
+	for i in 0 ..< len(xs) {
+		if xs[i].t >= 0 {
+			if lowest == nil || xs[i].t < lowest.t {
+				lowest = &xs[i]
+			}
+		}
+	}
+	return lowest
 }
 
 //****************************************/
@@ -104,4 +115,49 @@ intersect_behind_test :: proc(t: ^testing.T) {
 	testing.expect_value(t, count, 2)
 	testing.expect_value(t, xs[0].t, -6.0)
 	testing.expect_value(t, xs[1].t, -4.0)
+}
+
+@(test)
+hit_all_positive_test :: proc(t: ^testing.T) {
+	s := unit_sphere()
+	i1 := intersection(1.0, &s)
+	i2 := intersection(2.0, &s)
+	xs := [2]Intersection{i2, i1}
+	h := hit(xs[:])
+	testing.expect(t, h != nil)
+	testing.expect(t, h^ == i1)
+}
+
+@(test)
+hit_some_negative_test :: proc(t: ^testing.T) {
+	s := unit_sphere()
+	i1 := intersection(-1.0, &s)
+	i2 := intersection(1.0, &s)
+	xs := [2]Intersection{i2, i1}
+	h := hit(xs[:])
+	testing.expect(t, h != nil)
+	testing.expect(t, h^ == i2)
+}
+
+@(test)
+hit_all_negative_test :: proc(t: ^testing.T) {
+	s := unit_sphere()
+	i1 := intersection(-2.0, &s)
+	i2 := intersection(-1.0, &s)
+	xs := [2]Intersection{i2, i1}
+	h := hit(xs[:])
+	testing.expect(t, h == nil)
+}
+
+@(test)
+hit_lowest_nonnegative_test :: proc(t: ^testing.T) {
+	s := unit_sphere()
+	i1 := intersection(5.0, &s)
+	i2 := intersection(7.0, &s)
+	i3 := intersection(-3.0, &s)
+	i4 := intersection(2.0, &s)
+	xs := [4]Intersection{i1, i2, i3, i4}
+	h := hit(xs[:])
+	testing.expect(t, h != nil)
+	testing.expect(t, h^ == i4)
 }
