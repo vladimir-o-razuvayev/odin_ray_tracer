@@ -28,19 +28,12 @@ canvas :: proc(width, height: int) -> Canvas {
 }
 
 canvas_destroy :: proc(c: Canvas) {
-	for i in 0 ..< len(c.pixels) {
-		delete(c.pixels[i])
-	}
+	for i in 0 ..< len(c.pixels) do delete(c.pixels[i])
 	delete(c.pixels)
 }
 
-pixel_at :: proc(c: Canvas, x, y: int) -> Color {
-	return c.pixels[x][y]
-}
-
-write_pixel :: proc(c: ^Canvas, x, y: int, col: Color) {
-	c.pixels[x][y] = col
-}
+pixel_at :: proc(c: Canvas, x, y: int) -> Color {return c.pixels[x][y]}
+write_pixel :: proc(c: ^Canvas, x, y: int, col: Color) {c.pixels[x][y] = col}
 
 canvas_to_ppm :: proc(c: Canvas) -> string {
 	builder := strings.builder_make()

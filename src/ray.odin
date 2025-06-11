@@ -15,6 +15,13 @@ position :: proc(r: Ray, t: f32) -> Point {
 	return add(r.origin, scale(r.direction, t))
 }
 
+transform :: proc(r: Ray, m: Matrix4) -> Ray {
+	return Ray {
+		origin = matrix_multiply_tuple(m, r.origin),
+		direction = matrix_multiply_tuple(m, r.direction),
+	}
+}
+
 //****************************************/
 // Tests
 //****************************************/
@@ -35,4 +42,22 @@ ray_position_test :: proc(t: ^testing.T) {
 	testing.expect(t, equal(position(r, 1), point(3, 3, 4)))
 	testing.expect(t, equal(position(r, -1), point(1, 3, 4)))
 	testing.expect(t, equal(position(r, 2.5), point(4.5, 3, 4)))
+}
+
+@(test)
+ray_translation_test :: proc(t: ^testing.T) {
+	r := ray(point(1, 2, 3), vector(0, 1, 0))
+	m := translation(3, 4, 5)
+	r2 := transform(r, m)
+	testing.expect(t, equal(r2.origin, point(4, 6, 8)))
+	testing.expect(t, equal(r2.direction, vector(0, 1, 0)))
+}
+
+@(test)
+ray_scaling_test :: proc(t: ^testing.T) {
+	r := ray(point(1, 2, 3), vector(0, 1, 0))
+	m := scaling(2, 3, 4)
+	r2 := transform(r, m)
+	testing.expect(t, equal(r2.origin, point(2, 6, 12)))
+	testing.expect(t, equal(r2.direction, vector(0, 3, 0)))
 }

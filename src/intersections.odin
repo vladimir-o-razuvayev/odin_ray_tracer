@@ -18,10 +18,13 @@ intersections :: proc(i1, i2: Intersection) -> (res: [2]Intersection, count: int
 }
 
 intersect :: proc(s: ^Sphere, r: Ray) -> (res: [2]Intersection, count: int = 0) {
-	sphere_to_ray := sub(r.origin, s^.center)
-	a := dot(r.direction, r.direction)
-	b := 2 * dot(r.direction, sphere_to_ray)
+	local_ray := transform(r, inverse(s.transform))
+	sphere_to_ray := sub(local_ray.origin, s^.center)
+
+	a := dot(local_ray.direction, local_ray.direction)
+	b := 2 * dot(local_ray.direction, sphere_to_ray)
 	c := dot(sphere_to_ray, sphere_to_ray) - s^.radius * s^.radius
+
 	discriminant := b * b - 4 * a * c
 	if discriminant >= 0 {
 		sqrt_disc := sqrt(discriminant)
@@ -32,8 +35,7 @@ intersect :: proc(s: ^Sphere, r: Ray) -> (res: [2]Intersection, count: int = 0) 
 	return res, count
 }
 
-hit :: proc(xs: []Intersection) -> ^Intersection {
-	lowest: ^Intersection
+hit :: proc(xs: []Intersection) -> (lowest: ^Intersection) {
 	for i in 0 ..< len(xs) {
 		if xs[i].t >= 0 {
 			if lowest == nil || xs[i].t < lowest.t {
