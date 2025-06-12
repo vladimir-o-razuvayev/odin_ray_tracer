@@ -7,10 +7,11 @@ Sphere :: struct {
 	center:    Point,
 	radius:    f32,
 	transform: Matrix4,
+	material:  Material,
 }
 
 unit_sphere :: proc() -> Sphere {
-	return Sphere{point(0, 0, 0), 1, identity_matrix()}
+	return Sphere{point(0, 0, 0), 1, identity_matrix(), default_material()}
 }
 
 normal_at :: proc(s: ^Sphere, world_point: Point) -> Vector {
@@ -36,6 +37,22 @@ sphere_set_transform_test :: proc(t: ^testing.T) {
 	trans := translation(2, 3, 4)
 	s.transform = trans
 	testing.expect(t, equal(s.transform, trans))
+}
+
+@(test)
+sphere_has_default_material_test :: proc(t: ^testing.T) {
+	s := unit_sphere()
+	m := s.material
+	testing.expect(t, equal(m, default_material()))
+}
+
+@(test)
+assign_material_to_sphere_test :: proc(t: ^testing.T) {
+	s := unit_sphere()
+	m := default_material()
+	m.ambient = 1
+	s.material = m
+	testing.expect(t, equal(s.material, m))
 }
 
 @(test)

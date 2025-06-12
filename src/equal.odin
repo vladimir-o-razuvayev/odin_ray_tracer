@@ -1,9 +1,10 @@
 package main
 
-EPSILON: f32 : 0.000005
+EPSILON: f32 : 0.00005
 
 // equal
 // A Vector should not be compared for equality with a Point (w == 0 or w == 1)
+_equal_mm :: proc(a, b: Material) -> bool {return a == b}
 _equal_tt :: proc(a, b: Tuple) -> bool {return _equal(a, b)}
 _equal_cc :: proc(a, b: Color) -> bool {return _equal(a, b)}
 _equal_pp :: proc(a, b: Point) -> bool {return _equal(a, b)}
@@ -29,6 +30,7 @@ _equal :: proc(a: $T1/Tuple, b: $T2/Tuple) -> bool {
 	return true
 }
 equal :: proc {
+	_equal_mm,
 	_equal_tt,
 	_equal_cc,
 	_equal_pp,

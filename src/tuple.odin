@@ -63,6 +63,7 @@ divide :: proc(a: $T/Tuple, scalar: f32) -> T {
 
 magnitude :: proc(v: $T/Tuple) -> f32 {return abs(sqrt(v.x * v.x + v.y * v.y + v.z * v.z))}
 hadamard_product :: proc(a, b: Color) -> Color {return Color{a.r * b.r, a.g * b.g, a.b * b.b, 0}}
+reflect :: proc(v: Vector, n: Vector) -> Vector {return sub(v, scale(n, 2 * dot(v, n)))}
 
 normalize :: proc(v: Vector) -> Vector {
 	m := magnitude(v)
@@ -293,4 +294,20 @@ hadamard_product_test :: proc(t: ^testing.T) {
 	c2 := color(0.9, 1, 0.1)
 	expected := color(0.9, 0.2, 0.04)
 	testing.expect(t, equal(hadamard_product(c1, c2), expected))
+}
+
+@(test)
+reflect_45_deg_test :: proc(t: ^testing.T) {
+	v := vector(1, -1, 0)
+	n := vector(0, 1, 0)
+	r := reflect(v, n)
+	testing.expect(t, equal(r, vector(1, 1, 0)))
+}
+
+@(test)
+reflect_slanted_surface_test :: proc(t: ^testing.T) {
+	v := vector(0, -1, 0)
+	n := vector(sqrt(2.0) / 2.0, sqrt(2.0) / 2.0, 0)
+	r := reflect(v, n)
+	testing.expect(t, equal(r, vector(1, 0, 0)))
 }
