@@ -3,21 +3,28 @@
 ## Commands
 
 ### Local
-`result/bin/odin_ray_tracer` to execute built app
+ - `result/bin/odin_ray_tracer` to execute built app
+ - `odin test src` to see full test output even when successful
+ - `open -a zed` to launch Zed from dev shell
 
 ### Nix
-`nix flake check` to run tests
-`nix develop` to enter dev shell
-`open -a zed` to launch Zed from dev shell
-`nix eval .#packages.aarch64-darwin.default` to see path to derivation
-`nix flake show`
-`nix-tree $(nix build .#devShells.aarch64-darwin.default --no-link --print-out-paths)` to see all packages and dependencies for the shell
-`nix-tree $(nix build .#packages.aarch64-darwin.default --no-link --print-out-paths)` to see all packages and dependencies for the shell
-`nix build` - build Odin project
+ - `nix develop` to enter dev shell
+ - `nix build` - build Odin project
+ - `nix eval .#packages.aarch64-darwin.default` to see path to derivation
+
+#### Tree
+ - `nix-tree $(nix build .#devShells.aarch64-darwin.default --no-link --print-out-paths)` to see all packages and dependencies for the shell
+ - `nix-tree $(nix build .#packages.aarch64-darwin.default --no-link --print-out-paths)` to see all packages and dependencies for the build
+
+#### Flake
+ - `nix flake check` to run tests
+ - `nix flake show`
 
 ### Pre-Commit
-`pre-commit install`
-`pre-commit autoupdate`
+ - `pre-commit install`
+ - `pre-commit autoupdate`
+
+## Docs
 
 ### Errata
  - Before running nix build, make sure to run `git add .` to include all new files
