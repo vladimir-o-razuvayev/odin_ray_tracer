@@ -3,6 +3,7 @@
 ## Commands
 
 ### Local
+`result/bin/odin_ray_tracer` to execute built app
 
 ### Nix
 `nix flake check` to run tests
