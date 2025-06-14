@@ -5,8 +5,9 @@ repos:
       - id: alejandra-nix
   - repo: local
     hooks:
-      - id: odin-tests
-        name: Run Odin Tests
-        entry: ./scripts/run-tests.sh
-        language: script
+      - id: nix-flake-check
+        name: Run `nix flake check`
+        entry: nix
+        args: ["flake", "check"]
+        language: system
         pass_filenames: false
