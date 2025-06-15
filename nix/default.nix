@@ -18,7 +18,7 @@ pkgs.stdenv.mkDerivation rec {
   doCheck = true;
 
   checkPhase = ''
-    odin test $src/src -thread-count:16 -strict-style
+    odin test src -define:ODIN_TEST_THREADS=16
   '';
 
   meta = with pkgs.lib; {

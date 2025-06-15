@@ -18,9 +18,7 @@
     in {
       packages.default = raytracer;
       devShells.default = pkgs.callPackage ./nix/shell.nix {inherit odin;};
-      checks = {
-        default = raytracer;
-      };
+      checks.default = raytracer;
     }
   ));
 }
