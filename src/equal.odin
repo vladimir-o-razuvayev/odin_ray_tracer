@@ -8,7 +8,7 @@ EPSILON: f32 : 0.00005
 // A Vector should not be compared for equality with a Point (w == 0 or w == 1)
 _equal_mm :: proc(a, b: Material) -> bool {return a == b}
 _equal_tt :: proc(a, b: Tuple) -> bool {return _equal(a, b)}
-_equal_cc :: proc(a, b: Color) -> bool {return _equal(a, b)}
+_equal_cc :: proc(a, b: Color, loc := #caller_location) -> bool {return _equal(a, b, loc)}
 _equal_pp :: proc(a, b: Point) -> bool {return _equal(a, b)}
 _equal_vv :: proc(a, b: Vector) -> bool {return _equal(a, b)}
 _equal_ff :: proc(a, b: f32, loc := #caller_location) -> bool {
@@ -30,9 +30,10 @@ _equal_matrix :: proc(a, b: $M, size: int) -> bool {
 	}
 	return true
 }
-_equal :: proc(a: $T1/Tuple, b: $T2/Tuple) -> bool {
+_equal :: proc(a: $T1/Tuple, b: $T2/Tuple, loc := #caller_location) -> bool {
 	for i in 0 ..< 4 {
 		if abs(a[i] - b[i]) > EPSILON {
+			log.errorf("%v: Expected %v to be equal to %v", loc.procedure, a, b)
 			return false
 		}
 	}
