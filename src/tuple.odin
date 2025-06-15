@@ -16,8 +16,8 @@ point :: proc(x, y, z: f32) -> Point {return Point{x, y, z, 1}}
 vector :: proc(x, y, z: f32) -> Vector {return Vector{x, y, z, 0}}
 zero_vector :: proc() -> Vector {return Vector{0, 0, 0, 0}}
 // We don't need to call `is_point` or `is_vector` on typed `Point` and `Vector`
-is_point :: proc(t: Tuple) -> bool {return equal(t.w, 1)}
-is_vector :: proc(t: Tuple) -> bool {return equal(t.w, 0)}
+is_point :: proc(t: Tuple) -> bool {return abs(t.w - 1) < EPSILON}
+is_vector :: proc(t: Tuple) -> bool {return abs(t.w) < EPSILON}
 
 // add
 // We want to enforce not adding a point to a point at compile time (w != 2)

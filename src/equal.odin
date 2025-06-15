@@ -1,5 +1,7 @@
 package main
 
+import "core:log"
+
 EPSILON: f32 : 0.00005
 
 // equal
@@ -9,7 +11,14 @@ _equal_tt :: proc(a, b: Tuple) -> bool {return _equal(a, b)}
 _equal_cc :: proc(a, b: Color) -> bool {return _equal(a, b)}
 _equal_pp :: proc(a, b: Point) -> bool {return _equal(a, b)}
 _equal_vv :: proc(a, b: Vector) -> bool {return _equal(a, b)}
-_equal_ff :: proc(a, b: f32) -> bool {return abs(a - b) < EPSILON}
+_equal_ff :: proc(a, b: f32, loc := #caller_location) -> bool {
+	if abs(a - b) < EPSILON {
+		return true
+	} else {
+		log.errorf("%v Expected %.2f to be equal to %.2f", loc.procedure, a, b)
+		return false
+	}
+}
 _equal_m4 :: proc(a, b: Matrix4) -> bool {return _equal_matrix(a, b, 4)}
 _equal_m3 :: proc(a, b: Matrix3) -> bool {return _equal_matrix(a, b, 3)}
 _equal_m2 :: proc(a, b: Matrix2) -> bool {return _equal_matrix(a, b, 2)}

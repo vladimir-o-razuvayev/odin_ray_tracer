@@ -1,5 +1,6 @@
 package main
 
+import "core:log"
 import "core:testing"
 
 Intersection :: struct {
@@ -17,13 +18,23 @@ intersections :: proc(i1, i2: Intersection) -> (res: [2]Intersection, count: int
 	return res, 2
 }
 
-intersect :: proc(s: ^Sphere, r: Ray) -> (res: [2]Intersection, count: int = 0) {
+intersect :: proc(
+	s: ^Sphere,
+	r: Ray,
+	loc := #caller_location,
+) -> (
+	res: [2]Intersection,
+	count: int = 0,
+) {
+	log.debugf("%v: Sphere: %v Ray: %r", loc.procedure, s, r)
+
 	local_ray := transform(r, inverse(s.transform))
 	sphere_to_ray := sub(local_ray.origin, s^.center)
 
 	a := dot(local_ray.direction, local_ray.direction)
 	b := 2 * dot(local_ray.direction, sphere_to_ray)
 	c := dot(sphere_to_ray, sphere_to_ray) - s^.radius * s^.radius
+	log.debugf("%v a: %.2f b: %.2f c: %.2f", loc.procedure, a, b, c)
 
 	discriminant := b * b - 4 * a * c
 	if discriminant >= 0 {

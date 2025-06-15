@@ -57,7 +57,7 @@ determinant :: proc {
 	_determinant_4x4,
 }
 
-is_invertible :: proc(m: $M) -> bool {return !equal(determinant(m), 0.0)}
+is_invertible :: proc(m: $M) -> bool {return abs(determinant(m)) > EPSILON}
 
 _submatrix_2x2 :: proc(m: Matrix2, row, col: int) -> (res: Matrix1) {
 	_submatrix(m, &res, row, col, 3)
