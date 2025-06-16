@@ -42,6 +42,21 @@ shearing :: proc(xy, xz, yx, yz, zx, zy: f32) -> Matrix4 {
 	return Matrix4{{1, xy, xz, 0}, {yx, 1, yz, 0}, {zx, zy, 1, 0}, {0, 0, 0, 1}}
 }
 
+view_transform :: proc(from, to: Point, up: Vector) -> Matrix4 {
+	forward := normalize(sub(to, from))
+	upn := normalize(up)
+	left := cross(forward, upn)
+	true_up := cross(left, forward)
+
+	orientation := Matrix4 {
+		{left.x, left.y, left.z, 0},
+		{true_up.x, true_up.y, true_up.z, 0},
+		{-forward.x, -forward.y, -forward.z, 0},
+		{0, 0, 0, 1},
+	}
+
+	return matrix_multiply(orientation, translation(-from.x, -from.y, -from.z))
+}
 
 //****************************************/
 // Tests
@@ -228,4 +243,50 @@ chained_transforms_reverse_order_test :: proc(t: ^testing.T) {
 	trans := matrix_multiply(matrix_multiply(c, b), a)
 	result := matrix_multiply_tuple(trans, p)
 	testing.expect(t, equal(result, point(15, 0, 7)))
+}
+
+@(test)
+view_transform_default_orientation_test :: proc(t: ^testing.T) {
+	from := point(0, 0, 0)
+	to := point(0, 0, -1)
+	up := vector(0, 1, 0)
+
+	tfm := view_transform(from, to, up)
+	testing.expect(t, equal(tfm, identity_matrix()))
+}
+
+@(test)
+view_transform_positive_z_test :: proc(t: ^testing.T) {
+	from := point(0, 0, 0)
+	to := point(0, 0, 1)
+	up := vector(0, 1, 0)
+
+	tfm := view_transform(from, to, up)
+	testing.expect(t, equal(tfm, scaling(-1, 1, -1)))
+}
+
+@(test)
+view_transform_moves_world_test :: proc(t: ^testing.T) {
+	from := point(0, 0, 8)
+	to := point(0, 0, 0)
+	up := vector(0, 1, 0)
+
+	tfm := view_transform(from, to, up)
+	testing.expect(t, equal(tfm, translation(0, 0, -8)))
+}
+
+@(test)
+view_transform_arbitrary_test :: proc(t: ^testing.T) {
+	from := point(1, 3, 2)
+	to := point(4, -2, 8)
+	up := vector(1, 1, 0)
+
+	tfm := view_transform(from, to, up)
+	expected := Matrix4 {
+		{-0.50709, 0.50709, 0.67612, -2.36643},
+		{0.76772, 0.60609, 0.12122, -2.82843},
+		{-0.35857, 0.59761, -0.71714, 0.00000},
+		{0.00000, 0.00000, 0.00000, 1.00000},
+	}
+	testing.expect(t, equal(tfm, expected))
 }
