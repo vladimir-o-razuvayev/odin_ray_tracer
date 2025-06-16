@@ -6,7 +6,7 @@ result-*
 .direnv
 
 # Ignore generated output files
-projectile.ppm
+*.ppm
 
 # Ignore OS cruft
 .DS_Store
