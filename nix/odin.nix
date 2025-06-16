@@ -6,22 +6,30 @@
   which,
   nix-update-script,
 }: let
-  inherit (llvmPackages) stdenv;
+  bin_path = lib.makeBinPath (
+    with llvmPackages; [
+      bintools
+      llvm
+      clang
+      lld
+    ]
+  );
+
+  version = "dev-2025-06";
 in
-  stdenv.mkDerivation (finalAttrs: {
+  llvmPackages.stdenv.mkDerivation {
     pname = "odin";
-    version = "dev-2025-06";
+    inherit version;
 
     src = fetchFromGitHub {
       owner = "odin-lang";
       repo = "Odin";
-      tag = finalAttrs.version;
+      tag = version;
       hash = "sha256-Dhy62+ccIjXUL/lK8IQ+vvGEsTrd153tPp4WIdl3rh4=";
     };
 
-    patches = [
-      ./darwin-remove-impure-links.patch
-    ];
+    patches = [./darwin-remove-impure-links.patch];
+
     postPatch = ''
       patchShebangs --build build_odin.sh
     '';
@@ -46,18 +54,7 @@ in
       mkdir -p $out/share
       cp -r {base,core,vendor,shared} $out/share
 
-      wrapProgram $out/bin/odin \
-        --prefix PATH : ${
-        lib.makeBinPath (
-          with llvmPackages; [
-            bintools
-            llvm
-            clang
-            lld
-          ]
-        )
-      } \
-        --set-default ODIN_ROOT $out/share
+      wrapProgram $out/bin/odin --prefix PATH : ${bin_path} --set-default ODIN_ROOT $out/share
 
       make -C "$out/share/vendor/cgltf/src/"
       make -C "$out/share/vendor/stb/src/"
@@ -72,13 +69,9 @@ in
       description = "Fast, concise, readable, pragmatic and open sourced programming language";
       downloadPage = "https://github.com/odin-lang/Odin";
       homepage = "https://odin-lang.org/";
-      changelog = "https://github.com/odin-lang/Odin/releases/tag/${finalAttrs.version}";
+      changelog = "https://github.com/odin-lang/Odin/releases/tag/${version}";
       license = lib.licenses.bsd3;
       mainProgram = "odin";
-      maintainers = with lib.maintainers; [
-        astavie
-      ];
       platforms = lib.platforms.unix;
-      broken = stdenv.hostPlatform.isMusl;
     };
-  })
+  }

@@ -21,8 +21,8 @@ pkgs.stdenv.mkDerivation rec {
     odin test $src/src
   '';
 
-  meta = with pkgs.lib; {
+  meta = {
     description = "Ray Tracer Challenge in Odin";
-    platforms = platforms.all;
+    platforms = pkgs.lib.platforms.all;
   };
 }

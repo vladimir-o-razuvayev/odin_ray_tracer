@@ -7,9 +7,9 @@
   };
 
   outputs = {
-    self,
     nixpkgs,
     flake-utils,
+    ...
   }: (flake-utils.lib.eachSystem ["aarch64-darwin"] (
     system: let
       pkgs = import nixpkgs {inherit system;};
