@@ -2,7 +2,7 @@ package main
 
 import "core:log"
 
-EPSILON: f32 : 0.00005
+EPSILON: f32 : 0.00001
 
 // equal
 // A Vector should not be compared for equality with a Point (w == 0 or w == 1)

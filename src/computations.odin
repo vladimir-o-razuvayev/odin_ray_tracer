@@ -24,7 +24,8 @@ prepare_computations :: proc(i: Intersection, r: Ray) -> Computations {
 		normalv = -normalv
 	}
 
-	over_point := add(point, scale(normalv, EPSILON))
+	// Value of 0.005 discovered by testing chapter 7's scene
+	over_point := add(point, scale(normalv, 0.005))
 
 	return Computations {
 		t = i.t,

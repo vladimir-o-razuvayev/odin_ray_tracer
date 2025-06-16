@@ -136,7 +136,7 @@ lighting_eye_in_reflection_path_test :: proc(t: ^testing.T) {
 	normalv := vector(0, 0, -1)
 	light := point_light(point(0, 10, -10), color(1, 1, 1))
 	result := lighting(m, light, position, eyev, normalv, false)
-	testing.expect(t, equal(result, color(1.6364, 1.6364, 1.6364)))
+	testing.expect(t, equal(result, color(1.6363853, 1.6363853, 1.6363853)))
 }
 
 @(test)
