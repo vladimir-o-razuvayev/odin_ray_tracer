@@ -75,7 +75,7 @@ is_shadowed :: proc(w: World, p: Point) -> bool {
 	// Create a ray from point toward the light source and intersect the world
 	r := ray(p, direction)
 	xs, count := intersect_world(w, r)
-
+	defer delete(xs)
 	// If hit lies between point and the light source then point is in shadow
 	h := hit(xs[:count])
 	return h != nil && h.t < distance
@@ -166,6 +166,7 @@ lighting_in_shadow_test :: proc(t: ^testing.T) {
 @(test)
 no_shadow_when_nothing_collinear_test :: proc(t: ^testing.T) {
 	w := default_world()
+	defer delete(w.objects)
 	p := point(0, 10, 0)
 	testing.expect(t, is_shadowed(w, p) == false)
 }
@@ -173,6 +174,7 @@ no_shadow_when_nothing_collinear_test :: proc(t: ^testing.T) {
 @(test)
 shadow_when_object_between_point_and_light_test :: proc(t: ^testing.T) {
 	w := default_world()
+	defer delete(w.objects)
 	p := point(10, -10, 10)
 	testing.expect(t, is_shadowed(w, p) == true)
 }
@@ -180,6 +182,7 @@ shadow_when_object_between_point_and_light_test :: proc(t: ^testing.T) {
 @(test)
 no_shadow_when_object_behind_light_test :: proc(t: ^testing.T) {
 	w := default_world()
+	defer delete(w.objects)
 	p := point(-20, 20, -20)
 	testing.expect(t, is_shadowed(w, p) == false)
 }
@@ -187,6 +190,7 @@ no_shadow_when_object_behind_light_test :: proc(t: ^testing.T) {
 @(test)
 no_shadow_when_object_behind_point_test :: proc(t: ^testing.T) {
 	w := default_world()
+	defer delete(w.objects)
 	p := point(-2, 2, -2)
 	testing.expect(t, is_shadowed(w, p) == false)
 }

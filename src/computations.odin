@@ -4,12 +4,13 @@ import "core:math"
 import "core:testing"
 
 Computations :: struct {
-	t:       f32,
-	object:  ^Sphere,
-	point:   Point,
-	eyev:    Vector,
-	normalv: Vector,
-	inside:  bool,
+	t:          f32,
+	object:     ^Sphere,
+	point:      Point,
+	eyev:       Vector,
+	normalv:    Vector,
+	inside:     bool,
+	over_point: Point,
 }
 
 prepare_computations :: proc(i: Intersection, r: Ray) -> Computations {
@@ -23,6 +24,8 @@ prepare_computations :: proc(i: Intersection, r: Ray) -> Computations {
 		normalv = -normalv
 	}
 
+	over_point := add(point, scale(normalv, EPSILON))
+
 	return Computations {
 		t = i.t,
 		object = i.object,
@@ -30,6 +33,7 @@ prepare_computations :: proc(i: Intersection, r: Ray) -> Computations {
 		eyev = eyev,
 		normalv = normalv,
 		inside = inside,
+		over_point = over_point,
 	}
 }
 
@@ -65,4 +69,18 @@ prepare_computations_inside_test :: proc(t: ^testing.T) {
 	testing.expect(t, equal(comps.eyev, vector(0, 0, -1)))
 	testing.expect(t, comps.inside)
 	testing.expect(t, equal(comps.normalv, vector(0, 0, -1)))
+}
+
+@(test)
+prepare_computations_offset_point_test :: proc(t: ^testing.T) {
+	r := ray(point(0, 0, -5), vector(0, 0, 1))
+
+	s := unit_sphere()
+	s.transform = translation(0, 0, 1)
+
+	i := intersection(5, &s)
+	comps := prepare_computations(i, r)
+
+	testing.expect(t, comps.over_point.z < -EPSILON / 2.0)
+	testing.expect(t, comps.point.z > comps.over_point.z)
 }

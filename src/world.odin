@@ -43,13 +43,14 @@ intersect_world :: proc(w: World, r: Ray) -> ([]Intersection, int) {
 }
 
 shade_hit :: proc(world: World, comps: Computations) -> Color {
+	shadowed := is_shadowed(world, comps.over_point)
 	return lighting(
 		comps.object.material,
 		world.light,
 		comps.point,
 		comps.eyev,
 		comps.normalv,
-		false,
+		shadowed,
 	)
 }
 
@@ -185,4 +186,24 @@ color_with_intersection_behind_ray_test :: proc(t: ^testing.T) {
 	r := ray(point(0, 0, 0.75), vector(0, 0, -1))
 	c := color_at(w, r)
 	testing.expect(t, equal(c, inner.material.color))
+}
+
+@(test)
+shade_hit_in_shadow_test :: proc(t: ^testing.T) {
+	w := world()
+	w.light = point_light(point(0, 0, -10), color(1, 1, 1))
+
+	s1 := unit_sphere()
+	s2 := unit_sphere()
+	s2.transform = translation(0, 0, 10)
+
+	w.objects = []Sphere{s1, s2}
+
+	r := ray(point(0, 0, 5), vector(0, 0, 1))
+	i := intersection(4, &s2)
+	comps := prepare_computations(i, r)
+	c := shade_hit(w, comps)
+
+	expected := color(0.1, 0.1, 0.1)
+	testing.expect(t, equal(c, expected))
 }
