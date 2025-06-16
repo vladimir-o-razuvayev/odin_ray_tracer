@@ -43,7 +43,14 @@ intersect_world :: proc(w: World, r: Ray) -> ([]Intersection, int) {
 }
 
 shade_hit :: proc(world: World, comps: Computations) -> Color {
-	return lighting(comps.object.material, world.light, comps.point, comps.eyev, comps.normalv)
+	return lighting(
+		comps.object.material,
+		world.light,
+		comps.point,
+		comps.eyev,
+		comps.normalv,
+		false,
+	)
 }
 
 color_at :: proc(w: World, r: Ray) -> Color {
